@@ -20,12 +20,12 @@ class cvparse():
         #   Experience, Education, Skills, Interests, Extracurricular
         # I'm going to put these in a list so I can check as I go
         #   through the resume to estimate how long each section is.
-        cvparse.titles = ["Experience", "Education", "Skills",
+        self.titles = ["Experience", "Education", "Skills",
             "Interests", "Extracurricular"]
 
         # Create a dictionary for words that show which category this 
         #   resume is in
-        cvparse.category = {'programming':0, 'business':0}
+        self.category = {'programming':0, 'business':0}
         # good enough for the demo, lol
 
     def category():
@@ -45,17 +45,17 @@ class cvparse():
 
         # Go through the tokens until first title:
         for token in tokens:
-            if(token in cvparse.category):
-                cvparse.category[token] += 1
-            if(token in cvparse.titles):
+            if(token in self.category):
+                self.category[token] += 1
+            if(token in self.titles):
                 current_title = token
 
         # Now we have the first title and can go through the tokens:
         # I know this is not efficient but it should work
         for token in tokens:
-            if(token in cvparse.category):
-                cvparse.category[token] += 1
-            if(token in cvparse.titles):
+            if(token in self.category):
+                self.category[token] += 1
+            if(token in self.titles):
                 # Add what you have until now to dictionary
                 resume_d[current_title] = count
 
@@ -69,10 +69,10 @@ class cvparse():
 
         # We also have a dict of categories and should return the
         #   category that appears the most
-        category()
+        self.category()
 
         # Send this to scoring and return score
-        scoring()
+        self.scoring()
 
         return
 
