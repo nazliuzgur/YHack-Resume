@@ -26,4 +26,4 @@ def convert(fname, pages=None):
     output.close
     return text 
 
-print(convert("sample.pdf"))
+# print(convert("sample.pdf"))

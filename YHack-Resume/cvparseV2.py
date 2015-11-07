@@ -6,6 +6,8 @@ import urllib
 import re, collections
 import os
 import tokenize
+import pdftotextmaybe
+import getCategory
 
 def init():
 
@@ -16,10 +18,9 @@ def init():
     # input the file name
     filename = raw_input("File name: ")
     if filename == " ":
-        return ("", "", "")
-    # elif filename.endswith(".pdf"):
-    #     content = getPDFContent(filename).encode("ascii", "ignore")
-    #     resume = content
+        return ("", "")
+    elif filename.endswith(".pdf"):
+        resume = pdftotextmaybe.convert(filename)
     else: 
         resume = readFile(filename).lower()
 
@@ -34,12 +35,8 @@ def init():
     titles = ["resume","experience", "education", "skills",
         "interests", "extracurricular", "projects", "leadership"]
 
-    # Create a dictionary for words that show which category this 
-    #   resume is in
-    category = {'computer science':0, 'business':0, "engineering":0, "health sciences":0, "physical sciences":0,
-                "fine arts":0, "humanities":0}
     # good enough for the demo, lol
-    return (resume, titles, category)
+    return (resume, titles)
 
 # def getPDFContent(filename):
 #     content = ""
@@ -53,9 +50,10 @@ def init():
 #     content = " ".join(content.replace(u"\xa0", " ").strip().split())
 #     return content
 
-def category():
+def category(resume):
     # Return the category that appears the most
-    return 42
+    (cat, score) = getCategory.mainCategoryAndScore(resume)
+    return (cat, score)
 
 def words(text): return re.findall("[a-z]+", text.lower())
 
@@ -83,14 +81,8 @@ def correct(word):
     candidates = known([word]) or known(edits1(word)) or known_edits2(word) or [word]
     return max(candidates, key=NWORDS.get)
 
-def score(resume_d):
-    # score according to the dict
-    return 42
-
-def main(resume, titles, category):
+def main(resume, titles):
     # initialize variables 
-    resume_d = dict() # dictionary to have the titles and how many
-                      #  words there are under that title
     tokens = tokenize.input_file(resume,[]) # have the words as tokens in a list
     current_title = ""
     count = 0 # the count
@@ -102,7 +94,6 @@ def main(resume, titles, category):
             token = token[0:len(token) - 1]
             if token in titles:
                 current_title = token
-    print tokens
 
     # find spelling errors
     for token in tokens:
@@ -111,7 +102,6 @@ def main(resume, titles, category):
                 continue
             else:
                 if (correct(token) != token):
-                    print token
                     errors += 1
         else: 
             token_parse = token.split()
@@ -120,7 +110,6 @@ def main(resume, titles, category):
                     if ("'" in tok):
                         continue
                     else:
-                        print tok
                         errors += 1
     if errors % 10 == 0: score -= (errors + 1) % 10
     else: score -= errors % 10 
@@ -142,14 +131,16 @@ def main(resume, titles, category):
             else:
                 if score < 10: score -= 0
                 else: score -= 10
+    (cat, c_score) = category(resume)
+    return (cat, score)
 
 def readFile(filename, mode="rt"):
     # rt = "read text"
     with open(filename, mode) as fin:
         return fin.read()
 
-(resume, titles, category) = init()
+(resume, titles) = init()
 NWORDS = train(words(file("dictionary.txt").read()))
 alphabet = "abcdefghijklmnopqrstuvwxyz"
-if (resume, titles, category) != ("", "", ""):
-    main(resume, titles, category)
+if (resume, titles) != ("", ""):
+    print main(resume, titles)
