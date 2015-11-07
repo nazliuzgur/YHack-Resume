@@ -3,6 +3,7 @@
 from __future__ import with_statement # for Python 2.5 and 2.6
 import urllib
 import os
+import tokenize
 
 def __init__():
 
@@ -46,7 +47,7 @@ def main(resume, titles, category):
     # initialize variables 
     resume_d = dict() # dictionary to have the titles and how many
                       #  words there are under that title
-    tokens = input_file(resume,[]) # have the words as tokens in a list
+    tokens = tokenize.input_file(resume,[]) # have the words as tokens in a list
     current_title = ""
     count = 0 # the count
 
