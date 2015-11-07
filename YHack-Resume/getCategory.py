@@ -65,7 +65,7 @@ def managementScore(resume):
     "customer", "interaction", "consumer", "implement", "analytical", "network",
     "skill analysis", "hiring", "firing", "business development", "contract negotiation",
     "budget", "leadership", "operational development", "evaluations", "management",
-    "business", "project planning", "data analysis", "production schedule", "network"]
+    "business", "project planning", "production schedule"]
 
     manWordScore = []
     for i in range(len(managementKeyWords)):
