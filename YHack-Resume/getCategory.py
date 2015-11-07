@@ -3,7 +3,7 @@ def softwareScore(resume):
     "go", "go!", "groovy", "haskell", "java", "javascript", "machine code", "matlab", 
     "max", "objective c", "perl", "php","html", "xml", "css", "processing", "python", 
     "ruby", "sml", "swift", "latex" "unity", "unix shell" "visual basic" "wolfram language", 
-    "xquery", "r", "julia", "sql", "clojure", "html5", "node.js", "scala", "kdb", "jquery"]
+    "xquery", "julia", "sql", "clojure", "html5", "node.js", "scala", "kdb", "jquery"]
 
     csKeyWords = ["computer", "engineering", "computer science", "prototype", "structured design",
     "code development", "communication skills", "problem solving", "software design",
