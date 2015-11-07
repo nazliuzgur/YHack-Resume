@@ -11,9 +11,12 @@ class cvparse():
         ### Convert pdf to txt with pdf miner 
         ########################################################
 
+        # input the file name
+        filename = input("File name: ")
+        self.resume = readFile(filename).lower()
 
         # the whole resume is in this file (and in lowercase)
-        self.resume = readFile("resume.txt").lower()
+        # self.resume = readFile("resume.txt").lower()
 
         # The resumes are nearly always in a template form:
         # They have titles, such as:
