@@ -72,7 +72,7 @@ class cvparse():
         self.category()
 
         # Send this to scoring and return score
-        self.scoring()
+        self.scoring(resume_d)
 
         return
 
