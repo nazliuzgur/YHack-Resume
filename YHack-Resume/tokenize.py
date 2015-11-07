@@ -1,5 +1,6 @@
 # Given input text, return next word
-
+def next_word(input_text):
+  # code goes here
 
 
 
