@@ -95,7 +95,7 @@ def main(resume, titles, category):
     current_title = ""
     count = 0 # the count
     errors = 0
-    score = 0
+    score = 100
 
     for token in tokens:
         if len(token.split()) == 1:
@@ -104,6 +104,7 @@ def main(resume, titles, category):
                 current_title = token
     print tokens
 
+    # find spelling errors
     for token in tokens:
         if len(token.split()) == 1:
             if token[0:len(token) - 1] in titles:
@@ -121,43 +122,26 @@ def main(resume, titles, category):
                     else:
                         print tok
                         errors += 1
-    score += errors % 10
+    if errors % 10 == 0: score -= (errors + 1) % 10
+    else: score -= errors % 10 
 
-
-    # Go through the tokens until first title:
-    # for token in tokens:
-    #     if(token in category):
-    #         category[token] += 1
-    #     if(token in titles):
-    #         current_title = token
-
-    # Now we have the first title and can go through the tokens:
-    # I know this is not efficient but it should work
-    # for token in tokens:
-    #     print token
-    #     if(token in category):
-    #         category[token] += 1
-    #     if(token in titles):
-    #         # Add what you have until now to dictionary
-    #         resume_d[current_title] = count
-
-    #         # Now, change the title and initialize the count
-    #         current_title = token
-    #         count = 0
-    #     count+=1 
-        # one more word has been counted
-
-    # Now we have the dict resume_d with the titles and how many
-    #   words there are in that section
-
-    # We also have a dict of categories and should return the
-    #   category that appears the most
-    # x = category()
-
-    # Send this to scoring and return score
-    # y = scoring(resume_d)
-# 
-
+    # find GPA
+    for token in tokens:
+        if token == "gpa":
+            index = tokens.index(token)
+            gpa = int(tokens[index + 1])
+            if gpa == 4.00:
+                if score == 100: score += 0
+                else: score += 10
+            elif gpa >= 3.00 and gpa < 4.00: 
+                if score == 100: score += 0
+                else: score += 5
+            elif gpa >= 2.00 and gpa < 3.00:
+                if score < 5: score -= 0
+                else: score -= 5
+            else:
+                if score < 10: score -= 0
+                else: score -= 10
 
 def readFile(filename, mode="rt"):
     # rt = "read text"
