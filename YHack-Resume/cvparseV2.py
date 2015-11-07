@@ -30,7 +30,7 @@ def __init__():
 
     # Create a dictionary for words that show which category this 
     #   resume is in
-    category = {'computer science':0, 'business':0, "engineering":0, "health sciences":0, "physical sciences":0
+    category = {'computer science':0, 'business':0, "engineering":0, "health sciences":0, "physical sciences":0,
                 "fine arts":0, "humanities":0}
     # good enough for the demo, lol
     return (resume, titles, category)
