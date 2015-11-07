@@ -1,4 +1,4 @@
-def softwareScore(resume) :
+def softwareScore(resume):
     programming = ["assembly", "bash", "c", "c++", "c#", "coffeescript", "emacs lisp",
     "go", "go!", "groovy", "haskell", "java", "javascript", "machine code", "matlab", 
     "max", "objective c", "perl", "php","html", "xml", "css", "processing", "python", 
@@ -20,7 +20,6 @@ def softwareScore(resume) :
     for i in range(len(csKeyWords)):
         csWordScore.append(0)
         if csKeyWords[i].lower() in (resume.lower()) != -1:
-            print(csKeyWords[i])
             (csWordScore[i]) += 1
 
     csScore = (float)(sum(programmingScore) + sum(csWordScore)) / (len(programming) + len(csKeyWords))
@@ -40,7 +39,7 @@ def engineeringScore(resume):
         if engineeringKeyWords[i].lower() in (resume.lower()) != -1:
             (engWordScore[i]) += 1
 
-    eingScore = (float)(sum(engWordScore) / len(engineeringKeyWords))
+    engScore = (float)(sum(engWordScore)) / len(engineeringKeyWords)
 
     return engScore
 
@@ -57,7 +56,7 @@ def financeScore(resume):
         if financeKeyWords[i].lower() in (resume.lower()) != -1:
             (finWordScore[i]) += 1
 
-    finScore = (float)(sum(finWordScore) / len(financeKeyWords))
+    finScore = (float)(sum(finWordScore)) / len(financeKeyWords)
 
     return finScore
 
@@ -74,7 +73,7 @@ def managementScore(resume):
         if managementKeyWords[i].lower() in (resume.lower()) != -1:
             (manWordScore[i]) += 1
 
-    manScore = (float)(sum(manWordScore) / len(managementKeyWords))
+    manScore = (float)(sum(manWordScore)) / len(managementKeyWords)
 
     return manScore
 
@@ -90,11 +89,26 @@ def mainCategoryAndScore(resume):
     maxScore = b[0]
     maxIndex = 0
 
-    for x in b:
-        if b[x] > maxScore:
+    for x in range(len(b)):
+        if (b[x]) > maxScore:
             maxIndex = x
             maxScore = b[x]
 
     c = zip(a,b)
 
     return c[maxIndex]
+
+def printAllCategoryScores(resume):
+    cs = softwareScore(resume)
+    eng = engineeringScore(resume)
+    fin = financeScore(resume)
+    man = managementScore(resume)
+
+    a = ["computer science", "engineering", "finance", "business management"]
+    b = [cs, eng, fin, man]
+
+    c = zip(a,b)
+
+    print(c)
+
+    return
