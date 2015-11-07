@@ -57,7 +57,6 @@ def financeScore(resume):
             (finWordScore[i]) += 1
 
     finScore = (float)(sum(finWordScore)) / len(financeKeyWords)
-
     return finScore
 
 def managementScore(resume):
