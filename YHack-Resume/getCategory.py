@@ -13,13 +13,14 @@ def softwareScore(resume) :
     programmingScore = []
     for i in range(len(programming)):
         programmingScore.append(0)
-        if programming[i].lower().find(resume.lower()) != -1:
+        if programming[i].lower() in (resume.lower()) != -1:
             (programmingScore[i]) += 1
 
     csWordScore = []
     for i in range(len(csKeyWords)):
         csWordScore.append(0)
-        if csKeyWords[i].lower().find(resume.lower()) != -1:
+        if csKeyWords[i].lower() in (resume.lower()) != -1:
+            print(csKeyWords[i])
             (csWordScore[i]) += 1
 
     csScore = (float)(sum(programmingScore) + sum(csWordScore)) / (len(programming) + len(csKeyWords))
@@ -36,7 +37,7 @@ def engineeringScore(resume):
     engWordScore = []
     for i in range(len(engineeringKeyWords)):
         engWordScore.append(0)
-        if engineeringKeyWords[i].lower().find(resume.lower()) != -1:
+        if engineeringKeyWords[i].lower() in (resume.lower()) != -1:
             (engWordScore[i]) += 1
 
     eingScore = (float)(sum(engWordScore) / len(engineeringKeyWords))
@@ -53,7 +54,7 @@ def financeScore(resume):
     finWordScore = []
     for i in range(len(financeKeyWords)):
         finWordScore.append(0)
-        if financeKeyWords[i].lower().find(resume.lower()) != -1:
+        if financeKeyWords[i].lower() in (resume.lower()) != -1:
             (finWordScore[i]) += 1
 
     finScore = (float)(sum(finWordScore) / len(financeKeyWords))
@@ -70,7 +71,7 @@ def managementScore(resume):
     manWordScore = []
     for i in range(len(managementKeyWords)):
         manWordScore.append(0)
-        if managementKeyWords[i].lower().find(resume.lower()) != -1:
+        if managementKeyWords[i].lower() in (resume.lower()) != -1:
             (manWordScore[i]) += 1
 
     manScore = (float)(sum(manWordScore) / len(managementKeyWords))
