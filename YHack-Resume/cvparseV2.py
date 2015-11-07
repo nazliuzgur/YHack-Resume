@@ -29,7 +29,7 @@ class cvparse():
         # good enough for the demo, lol
 
     def score(resume_d):
-        # score according to the dict
+        # scoring according to the dict
 
 
     def main():
