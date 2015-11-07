@@ -116,8 +116,11 @@ def main(resume, titles, category):
             token_parse = token.split()
             for tok in token_parse:
                 if (correct(tok) != tok):
-                    print tok
-                    errors += 1
+                    if ("'" in tok):
+                        continue
+                    else:
+                        print tok
+                        errors += 1
     score += errors % 10
 
 
