@@ -27,20 +27,67 @@ def init():
         resume = pdftotextmaybe.convert(filename)
     else: 
         resume = readFile(filename).lower()
-
-    # different sections of a resume (most of the time)
-    titles = ["resume","experience", "education", "skills",
-        "interests", "extracurricular", "projects", "leadership"]
-
     # return resume as a string with different sections
-    return (resume, titles)
+    # good enough for the demo, lol
+    return resume
 
 def category(resume):
     # Return the category that appears the most
     (cat, score) = getCategory.mainCategoryAndScore(resume)
     return (cat, score)
 
-def main(resume, titles):
+def words(text): return re.findall("[a-z]+", text.lower())
+
+def train(features):
+    model = collections.defaultdict(lambda: 1)
+    for f in features:
+        model[f] += 1
+    return model
+
+def edits1(word):
+    splits = [(word[:i], word[i:]) for i in xrange(len(word) + 1)]
+    deletes = [a + b[1:] for a, b in splits if b]
+    transposes = [a + b[1] + b[0] + b[2:] for a, b in splits if len(b) > 1]
+    replaces = [a + c + b[1:] for a, b in splits for c in alphabet if b]
+    inserts = [a + c + b for a, b in splits for c in alphabet]
+    return set(deletes + transposes + replaces + inserts)
+
+def known_edits2(word):
+    return set(e2 for e1 in edits1(word) for e2 in edits1(e1) if e2 in NWORDS)
+
+def known(words):
+    return set(w for w in words if w in NWORDS)
+
+def correct(word):
+    candidates = known([word]) or known(edits1(word)) or known_edits2(word) or [word]
+    return max(candidates, key=NWORDS.get)
+
+def sectionScore(resume):
+    titles = ["work experience", "experience", "employment", "education", "skills",
+        "interests", "extracurricular", "projects", "leadership", "honors", "references", 
+        "awards", "acheivements"]
+
+    section_tokens = tokenize.input_file_words(resume,[])
+    employmentSection = false
+    projectSection = false
+    leaderSection = false
+    currentIndex = -1
+    wordCount = [0,0,0]
+    for x.lower in section_tokens: 
+        if(x.strip("!@#$%^&*()_+|}{:?") in ["work experience", "employment", "experience"] and currentIndex != 0):
+            currentIndex = 0
+        elif(x.strip("!@#$%^&*()_+|}{:?") in ["publications", "projects", "research"] and currentIndex != 1):
+            currentIndex = 1
+        elif(x.strip("!@#$%^&*()_+|}{:?") in ["leadership"] and currentIndex != 2):
+            currentIndex = 2    
+        elif(x.strip("!@#$%^&*()_+|}{:?") in ["education", "skils", "interests", "extracurricular", "honors", "references", "awards", "acheivements"]):
+            currentIndex = -1
+        else:
+            wordCount[currentIndex] += 1
+
+    return  ((sum(wordCount) - min(wordCount))) / 350.0 * 10
+
+def main(resume):
     # initialize variables 
     # have the words as tokens in a list
     tokens = tokenize.input_file_lines(resume,[])
@@ -85,6 +132,17 @@ def main(resume, titles):
                 else:
                     errors += 7
                 gpaFound = True
+                for word in words:
+                    gpa = float(word)
+                    if gpa == 4.00:
+                        errors += 0
+                    elif gpa >= 3.00 and gpa < 4.00:
+                        errors += 3
+                    elif gpa >= 2.00 and gpa < 3.00:
+                        errors += 5
+                    else:
+                        errors += 7
+                    gpaFound = True
             else:
                 gpa = float(word_tokens[index + 1])
                 if gpa == 4.00:
@@ -119,6 +177,7 @@ def main(resume, titles):
                 close_match = word
                 break
     quit = False
+
     stop_search = False
     while (not quit):
         if degree == [] and close_match_fail == False: 
@@ -136,6 +195,15 @@ def main(resume, titles):
             else:
                 print("Closest match to " + desiredDegree + " is " +
                     degree[0] + ".")
+
+    while (not(quit)):
+        answer1 = raw_input("Would you like to search for another degree? (Y/N)")
+        if answer1 == "Y" or answer1 == "y" or answer == "yes" or answer == "Yes":
+            desiredDegree = raw_input("Degree needed: ")
+            degree = difflib.get_close_matches(desiredDegree, word_tokens)
+            print("Closest match to " + desiredDegree + " is " +
+                    degree + ".")
+        else:
             quit = True
     close_match_fail = False
     close_match = ""
@@ -219,6 +287,11 @@ def readFile(filename, mode="rt"):
     with open(filename, mode) as fin:
         return fin.read()
 
-(resume, titles) = init()
-if (resume, titles) != ("", ""):
-    print main(resume, titles)
+resume = init()
+if resume != ("", ""):
+    print main(resume)
+resume = init()
+NWORDS = train(words(file("dictionary.txt").read()))
+alphabet = "abcdefghijklmnopqrstuvwxyz"
+if resume != "":
+    print main(resume)
