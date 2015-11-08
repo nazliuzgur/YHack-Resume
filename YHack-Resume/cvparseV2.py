@@ -31,15 +31,16 @@ def init():
     # good enough for the demo, lol
     return resume
 
-def category(resume):
+def category(resume, progWords = None, csWords = None, engWords = None, finWords = None, manWords = None, artWords = None):
     # Return the category that appears the most
-    (cat, score) = getCategory.mainCategoryAndScore(resume)
+    (cat, score) = getCategory.mainCategoryAndScore(resume, progWords, csWords, engWords, finWords, manWords, artWords)
     return (cat, score)
 
 def overall(resume):
     overall = getCategory.getCategoriesAverage(resume)
     return overall
 
+<<<<<<< HEAD
 def programmingScore(resume):
     proScore = getCategory.programmingScore(resume)
     return proScore
@@ -51,6 +52,49 @@ def gpaScoreCalculator(gpa):
 
 def gpaScore(word_tokens):
     score = 0
+=======
+    print(wordCount)
+    return  ((sum(wordCount) - min(wordCount))) / 350.0 * 10
+
+def main(resume):
+    # initialize variables 
+    # have the words as tokens in a list
+    tokens = tokenize.input_file_lines(resume,[])
+    # current section of resume
+    current_title = ""
+    # number of words
+    count = 0
+    # "errors" will be taken out of possible score of 100
+    # 100 is an impressive resume in contrast to 
+    # 0, which would be a resume not suitable for the job or
+    # not meeting requirements of the job
+    errors = 0
+    score = 100
+    email = ""
+    cats = ["Programming Languages", "Computer Science", "Engineering", "Finance", "Business Management", "the Arts"]
+
+    for i in range(len(cats)):
+        path = raw_input("Please type the name of a file containing all keywords associated with "+ cats[i] + ' separated by line\n\
+(leave blank for defaults)\n')
+        if(path == ""):
+            cats[i] = None
+        else:
+            with open(path, "r") as fin:
+                cats[i] = fin.read().splitlines()
+    # word count
+    for tok in tokens:
+        if tok != "":
+            count += 1
+    # 475 words -> average amount of words on one page
+    if count == 475: errors += 0
+    # accounts for resumes too short and too long
+    else:
+        errors += min(abs(475-count)/20, 5)
+
+    # GPA
+    word_tokens = tokenize.input_file_words(resume,[])
+    # print word_tokens
+>>>>>>> table
     gpaFound = False
     for token in word_tokens:
         if "gpa" in token.lower():
@@ -355,10 +399,16 @@ def main(resume):
     print section_score
 
     print "finished parsing"
+<<<<<<< HEAD
     score = category_score + overall_score + programming_score + \
             gpa_score + college_score + word_count_score + \
             degree_score + section_score
 
+=======
+    score -= errors
+        
+    (cat, c_score) = category(resume, cats[0],cats[1],cats[2],cats[3],cats[4],cats[5])
+>>>>>>> table
     return (cat, score, email)
 
 def readFile(filename, mode="rt"):
