@@ -48,9 +48,9 @@ def sectionScore(resume):
             currentIndex = 0
         elif(x.strip("!@#$%^&*()_+|}{:?") in ["publications", "projects", "research"] and currentIndex != 1):
             currentIndex = 1
-        elif(x.strip("!@#$%^&*()_+|}{:?") in ["leadership", "activities"] and currentIndex != 2):
+        elif(x.strip("!@#$%^&*()_+|}{:?") in ["leadership"] and currentIndex != 2):
             currentIndex = 2    
-        elif(x.strip("!@#$%^&*()_+|}{:?") in ["education", "skils", "interests", "extracurricular", "honors", "references", "awards", "acheivements"]):
+        elif(x.strip("!@#$%^&*()_+|}{:?") in ["education", ,"activites","skils", "interests", "extracurricular", "honors", "references", "awards", "acheivements"]):
             currentIndex = -1
         else:
             wordCount[currentIndex] += 1
