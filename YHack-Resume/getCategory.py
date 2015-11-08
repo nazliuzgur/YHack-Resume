@@ -12,11 +12,16 @@ def programmingScore(resume, progWords = None):
 
     programmingTotal = 0
 
+
     for i in range(len(programming)):
         if programming[i].lower() in resume.lower() != -1:
             programmingTotal += 1
 
     progScore = min(programmingTotal/10.0, 1) * 5.0
+
+    fout = open("results.tex", "a")
+    fout.write("\\textbf{Programming Languages:} "+str(progScore)+"\\\\\n")
+    fout.close()
 
     return progScore
 
@@ -39,6 +44,11 @@ def softwareScore(resume, csWords = None):
 
     csScore = min((float)(sum(csWordScore)+10) / (len(csKeyWords)),1.0) * 25.0
 
+
+    fout = open("results.tex", "a")
+    fout.write("\\textbf{Software:} "+str(csScore)+"\\\\\n")
+    fout.close()
+
     return csScore
 
 def engineeringScore(resume, engWords = None):
@@ -59,6 +69,11 @@ def engineeringScore(resume, engWords = None):
             (engWordScore[i]) += 1
 
     engScore = min((float)(sum(engWordScore)+10) / len(engineeringKeyWords),1.0) * 25.0
+
+
+    fout = open("results.tex", "a")
+    fout.write("\\textbf{Engineering:} "+str(engScore)+"\\\\\n")
+    fout.close()
 
     return engScore
 
@@ -82,6 +97,12 @@ def financeScore(resume, finWords = None):
             (finWordScore[i]) += 1
 
     finScore = min((float)(sum(finWordScore)+10) / len(financeKeyWords), 1.0) * 25.0
+
+
+    fout = open("results.tex", "a")
+    fout.write("\\textbf{Finance:} "+str(finScore)+"\\\\\n")
+    fout.close()
+
     return finScore
 
 def managementScore(resume, manWords = None):
@@ -103,6 +124,11 @@ def managementScore(resume, manWords = None):
 
     manScore = min((float)(sum(manWordScore)+10) / len(managementKeyWords),1.0) * 25.0
 
+
+    fout = open("results.tex", "a")
+    fout.write("\\textbf{Management Skills:} "+str(manScore)+"\\\\\n")
+    fout.close()
+
     return manScore
 
 def artsScore(resume, artWords = None):
@@ -122,6 +148,11 @@ def artsScore(resume, artWords = None):
             (artsWordScore[i]) += 1
 
     artsScore = min((float)(sum(artsWordScore)+10) / len(artsKeyWords), 1.0) * 25.0
+
+
+    fout = open("results.tex", "a")
+    fout.write("\\textbf{Arts:} "+str(artsScore)+"\\\\\n")
+    fout.close()
 
     return artsScore
 

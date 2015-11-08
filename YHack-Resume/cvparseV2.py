@@ -9,26 +9,44 @@ import tokenize
 import pdftotextmaybe
 import getCategory
 import difflib
+import subprocess
 
 def init():
 
-    ########################################################
-    ### Convert pdf to txt with pdf miner 
-    ########################################################
+    ############################################################
+    ### Convert pdf to txt with pdf miner and start a write file
+    ############################################################
 
     # input the file name
-    filename = raw_input("File name: ")
+    filename = raw_input("Enter the name of a resume file or \
+directory containing resumes: \n")
     
+    # creates an empty tex file with the results in it
+    fout = open("results.tex", "w")
+    fout.write("\\documentclass{article}\n\\usepackage[utf8]{inputenc}\n\
+\\title{Results}\n\\begin{document}\n\n")
+    fout.close()
+
     # need this to work in case no input
     if filename == " ":
         return ("", "")
-    # is .pdf; need to convert to .txt
+    elif os.path.isdir(filename):
+        resumes = []
+        for doc in os.listdir(filename):
+            if doc.endswith(".pdf"):
+                resume = pdftotextmaybe.convert(os.path.join(filename,doc))
+                resumes.append(resume)
+            else:
+                resume = readFile(os.path.join(filename,doc)).lower()
+                resumes.append(resume)
+        return resumes
+    # is .pdf; need to convert to .txt    
     elif filename.endswith(".pdf"):
         resume = pdftotextmaybe.convert(filename)
     else: 
         resume = readFile(filename).lower()
     # return resume as a string with different sections
-    # good enough for the demo, lol
+
     return resume
 
 def category(resume, progWords = None, csWords = None, engWords = None, finWords = None, manWords = None, artWords = None):
@@ -40,7 +58,7 @@ def overall(resume):
     overall = getCategory.getCategoriesAverage(resume)
     return overall
 
-<<<<<<< HEAD
+
 def programmingScore(resume):
     proScore = getCategory.programmingScore(resume)
     return proScore
@@ -52,49 +70,7 @@ def gpaScoreCalculator(gpa):
 
 def gpaScore(word_tokens):
     score = 0
-=======
-    print(wordCount)
-    return  ((sum(wordCount) - min(wordCount))) / 350.0 * 10
 
-def main(resume):
-    # initialize variables 
-    # have the words as tokens in a list
-    tokens = tokenize.input_file_lines(resume,[])
-    # current section of resume
-    current_title = ""
-    # number of words
-    count = 0
-    # "errors" will be taken out of possible score of 100
-    # 100 is an impressive resume in contrast to 
-    # 0, which would be a resume not suitable for the job or
-    # not meeting requirements of the job
-    errors = 0
-    score = 100
-    email = ""
-    cats = ["Programming Languages", "Computer Science", "Engineering", "Finance", "Business Management", "the Arts"]
-
-    for i in range(len(cats)):
-        path = raw_input("Please type the name of a file containing all keywords associated with "+ cats[i] + ' separated by line\n\
-(leave blank for defaults)\n')
-        if(path == ""):
-            cats[i] = None
-        else:
-            with open(path, "r") as fin:
-                cats[i] = fin.read().splitlines()
-    # word count
-    for tok in tokens:
-        if tok != "":
-            count += 1
-    # 475 words -> average amount of words on one page
-    if count == 475: errors += 0
-    # accounts for resumes too short and too long
-    else:
-        errors += min(abs(475-count)/20, 5)
-
-    # GPA
-    word_tokens = tokenize.input_file_words(resume,[])
-    # print word_tokens
->>>>>>> table
     gpaFound = False
     for token in word_tokens:
         if "gpa" in token.lower():
@@ -121,8 +97,16 @@ def main(resume):
                     gpaFound = True
 
     # a resume with a GPA might indicate a lower GPA
-    if gpaFound == False: score = gpaScoreCalculator(2.5)
+    fout = open("results.tex", "a")
+    if gpaFound == False: 
+        fout.write("\\textbf{GPA: not found}\\\\\n")
+        score = gpaScoreCalculator(2.5)
+    else:
+        fout.write("\\textbf{GPA: " + str(gpa) +"}\\\\\n")
+    fout.close()
     return score
+
+    
 
 def collegeScore(word_tokens):
     university = ["Carnegie Mellon University", "Princeton University",
@@ -202,6 +186,10 @@ def collegeScore(word_tokens):
         for word in word_tokens:
             if(word != "University"):
                 if(word in college):
+
+                    fout = open("results.tex", "a")
+                    fout.write("\\textbf{"+ college + "}")
+                    fout.close()
                     i = university.index(college)
                     i = i + 1
                     break   
@@ -358,6 +346,17 @@ def main(resume):
     tokens = tokenize.input_file_lines(resume,[])
     word_tokens = tokenize.input_file_words(resume,[])
     score = 0
+
+
+    cats = ["Programming Languages", "Computer Science", "Engineering", "Finance", "Business Management", "the Arts"]
+    for i in range(len(cats)):
+        path = raw_input("Please type the name of a file containing all keywords associated with "+ cats[i] + ' separated by line\n\
+(leave blank for defaults)\n')
+        if(path == ""):
+            cats[i] = None
+        else:
+            with open(path, "r") as fin:
+                cats[i] = fin.read().splitlines()
     
     # get email
     email = ""
@@ -366,8 +365,12 @@ def main(resume):
             email = token
             break
 
+
+    fout = open("results.tex", "a")
+    fout.write("\\section{" + email +"}\n")
+    fout.close()
     # category score
-    (cat, category_score) = category(resume)
+    (cat, category_score) = category(resume, cats[0],cats[1],cats[2],cats[3],cats[4],cats[5])
     print category_score
 
     # overall score
@@ -399,16 +402,16 @@ def main(resume):
     print section_score
 
     print "finished parsing"
-<<<<<<< HEAD
     score = category_score + overall_score + programming_score + \
             gpa_score + college_score + word_count_score + \
             degree_score + section_score
 
-=======
-    score -= errors
-        
-    (cat, c_score) = category(resume, cats[0],cats[1],cats[2],cats[3],cats[4],cats[5])
->>>>>>> table
+    
+    fout = open("results.tex", "a")
+    fout.write("\\textbf{Best category: } "+cat+"\\\\\n\
+\\textbf{Overall Score: }"+ str(score) + " (out of 10)")
+    fout.close()
+
     return (cat, score, email)
 
 def readFile(filename, mode="rt"):
@@ -417,5 +420,17 @@ def readFile(filename, mode="rt"):
         return fin.read()
 
 resume = init()
-if resume != "":
+
+if type(resume) == list:
+    for i in range(len(resume)):
+        print main(resume[i])
+    fout = open("results.tex", "a")
+    fout.write("\\end{document}")
+    fout.close()
+    subprocess.call('pdflatex results.tex')
+elif resume != "":
     print main(resume)
+    fout = open("results.tex", "a")
+    fout.write("\\end{document}")
+    fout.close()
+    subprocess.call('pdflatex results.tex')
