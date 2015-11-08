@@ -11,9 +11,11 @@ def programmingScore(resume):
 
     for i in range(len(programming)):
         if programming[i].lower() in resume.lower() != -1:
-            programmingScore += 1
+            programmingTotal += 1
 
-    programmingScore = min(programmingTotal/8.0, 1) * 5.0
+    progScore = min(programmingTotal/10.0, 1) * 5.0
+
+    return progScore
 
 def softwareScore(resume):
     csKeyWords = ["computer", "software", "engineering", "computer science", "prototype", "structured design",
@@ -153,3 +155,5 @@ def printAllCategoryScores(resume):
 def printCategoriesAverage(resume):
     print(getCategoriesAverage(resume))
     return
+
+print(programmingScore(pdftotextmaybe.convert("sample3.pdf")))
