@@ -6,6 +6,9 @@ import urllib
 import re, collections
 import os
 import tokenize
+import pdftotextmaybe
+import getCategory
+import difflib
 
 def init():
 
@@ -16,10 +19,9 @@ def init():
     # input the file name
     filename = raw_input("File name: ")
     if filename == " ":
-        return ("", "", "")
-    # elif filename.endswith(".pdf"):
-    #     content = getPDFContent(filename).encode("ascii", "ignore")
-    #     resume = content
+        return ("", "")
+    elif filename.endswith(".pdf"):
+        resume = pdftotextmaybe.convert(filename)
     else: 
         resume = readFile(filename).lower()
 
@@ -34,12 +36,8 @@ def init():
     titles = ["resume","experience", "education", "skills",
         "interests", "extracurricular", "projects", "leadership"]
 
-    # Create a dictionary for words that show which category this 
-    #   resume is in
-    category = {'computer science':0, 'business':0, "engineering":0, "health sciences":0, "physical sciences":0,
-                "fine arts":0, "humanities":0}
     # good enough for the demo, lol
-    return (resume, titles, category)
+    return (resume, titles)
 
 # def getPDFContent(filename):
 #     content = ""
@@ -53,9 +51,10 @@ def init():
 #     content = " ".join(content.replace(u"\xa0", " ").strip().split())
 #     return content
 
-def category():
+def category(resume):
     # Return the category that appears the most
-    return 42
+    (cat, score) = getCategory.mainCategoryAndScore(resume)
+    return (cat, score)
 
 def words(text): return re.findall("[a-z]+", text.lower())
 
@@ -83,73 +82,129 @@ def correct(word):
     candidates = known([word]) or known(edits1(word)) or known_edits2(word) or [word]
     return max(candidates, key=NWORDS.get)
 
-def score(resume_d):
-    # score according to the dict
-    return 42
-
-def main(resume, titles, category):
+def main(resume, titles):
     # initialize variables 
-    resume_d = dict() # dictionary to have the titles and how many
-                      #  words there are under that title
-    tokens = tokenize.input_file(resume,[]) # have the words as tokens in a list
+    tokens = tokenize.input_file_lines(resume,[]) # have the words as tokens in a list
     current_title = ""
     count = 0 # the count
     errors = 0
     score = 100
+    email = ""
 
-    for token in tokens:
-        if len(token.split()) == 1:
-            token = token[0:len(token) - 1]
-            if token in titles:
-                current_title = token
-    print tokens
+    # word count
+    for tok in tokens:
+        if tok != "":
+            count += 1
+    if count == 475: errors += 0
+    else:
+        errors += min(abs(475-count)/20, 5)
+
+    # GPA
+    word_tokens = tokenize.input_file_words(resume,[])
+    print word_tokens
+    gpaFound = False
+    for token in word_tokens:
+        if "gpa" in token.lower():
+            index = word_tokens.index(token)
+            if "/" in word_tokens[index + 1]:
+                words = word_tokens[index + 1].split("/")
+                for word in words:
+                    gpa = int(word)
+                    if gpa == 4.00:
+                        errors += 0
+                    elif gpa >= 3.00 and gpa < 4.00:
+                        errors += 3
+                    elif gpa >= 2.00 and gpa < 3.00:
+                        errors += 5
+                    else:
+                        errors += 7
+                    gpaFound = True
+            else:
+                gpa = int(word_tokens[index + 1])
+                if gpa == 4.00:
+                    errors += 0
+                elif gpa >= 3.00 and gpa < 4.00:
+                    errors += 3
+                elif gpa >= 2.00 and gpa < 3.00:
+                    errors += 5
+                else:
+                    errors += 7
+                gpaFound = True
+    if gpaFound == False: errors += 9
+
+    # get email
+    for token in word_tokens:
+        if "@" in token:
+            email = token
+            break
+
+    # level of degree
+    desiredDegree = raw_input("Degree needed: ")
+    degree = difflib.get_close_matches(desiredDegree, word_tokens)
+    print("Closest match to " + desiredDegree + " is " +
+            degree + ".")
+    quit = False
+    while (!quit):
+        answer1 = raw_input("Would you like to search for another degree? (Y/N)")
+        if answer1 == "Y" or answer1 == "y" or answer == "yes" or answer == "Yes":
+            desiredDegree = raw_input("Degree needed: ")
+            degree = difflib.get_close_matches(desiredDegree, word_tokens)
+            print("Closest match to " + desiredDegree + " is " +
+                    degree + ".")
+        else answer1 = "N" or answer1 == "n" or answer1 == "no" or answer1 == "No":
+            quit = True
+    answer = raw_input("Is this what you are looking for? (Y/N)")
+    if answer == "yes": errors += 0
+    else: errors += 10
+
+    # word count under experience/projects/leadership
+
 
     # find spelling errors
-    for token in tokens:
-        if len(token.split()) == 1:
-            if token[0:len(token) - 1] in titles:
-                continue
-            else:
-                if (correct(token) != token):
-                    print token
-                    errors += 1
-        else: 
-            token_parse = token.split()
-            for tok in token_parse:
-                if (correct(tok) != tok):
-                    if ("'" in tok):
-                        continue
-                    else:
-                        print tok
-                        errors += 1
+    # for token in tokens:
+    #     if len(token.split()) == 1:
+    #         if token[0:len(token) - 1] in titles or token in titles:
+    #             continue
+    #         else:
+    #             if (correct(token) != token):
+    #                 errors += 1
+    #     else: 
+    #         token_parse = token.split()
+    #         for tok in token_parse:
+    #             if (correct(tok) != tok):
+    #                 if ("'" in tok or "," in tok):
+    #                     continue
+    #                 else:
+    #                     errors += 1
+        # if token == "gpa":
+        #     index = tokens.index(token)
+        #     gpa = int(tokens[index + 1])
+        #     if gpa == 4.00:
+        #         if score == 100: score += 0
+        #         else: score += 10
+        #     elif gpa >= 3.00 and gpa < 4.00: 
+        #         if score == 100: score += 0
+        #         else: score += 5
+        #     elif gpa >= 2.00 and gpa < 3.00:
+        #         if score < 5: score -= 0
+        #         else: score -= 5
+        #     else:
+        #         if score < 10: score -= 0
+        #         else: score -= 10
+    print "finished parsing"
     if errors % 10 == 0: score -= (errors + 1) % 10
     else: score -= errors % 10 
-
-    # find GPA
-    for token in tokens:
-        if token == "gpa":
-            index = tokens.index(token)
-            gpa = int(tokens[index + 1])
-            if gpa == 4.00:
-                if score == 100: score += 0
-                else: score += 10
-            elif gpa >= 3.00 and gpa < 4.00: 
-                if score == 100: score += 0
-                else: score += 5
-            elif gpa >= 2.00 and gpa < 3.00:
-                if score < 5: score -= 0
-                else: score -= 5
-            else:
-                if score < 10: score -= 0
-                else: score -= 10
+        
+    (cat, c_score) = category(resume)
+    return (cat, score)
 
 def readFile(filename, mode="rt"):
     # rt = "read text"
     with open(filename, mode) as fin:
         return fin.read()
 
-(resume, titles, category) = init()
+(resume, titles) = init()
 NWORDS = train(words(file("dictionary.txt").read()))
 alphabet = "abcdefghijklmnopqrstuvwxyz"
-if (resume, titles, category) != ("", "", ""):
-    main(resume, titles, category)
+if (resume, titles) != ("", ""):
+    print main(resume, titles)
