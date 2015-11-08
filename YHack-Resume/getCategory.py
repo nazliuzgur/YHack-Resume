@@ -30,7 +30,7 @@ def softwareScore(resume):
         if csKeyWords[i].lower() in (resume.lower()) != -1:
             (csWordScore[i]) += 1
 
-    csScore = min((float)(sum(csWordScore)+8) / (len(csKeyWords)),1.0) * 25.0
+    csScore = min((float)(sum(csWordScore)+10) / (len(csKeyWords)),1.0) * 25.0
 
     return csScore
 
@@ -47,7 +47,7 @@ def engineeringScore(resume):
         if engineeringKeyWords[i].lower() in (resume.lower()) != -1:
             (engWordScore[i]) += 1
 
-    engScore = min((float)(sum(engWordScore)+8) / len(engineeringKeyWords),1.0) * 25.0
+    engScore = min((float)(sum(engWordScore)+10) / len(engineeringKeyWords),1.0) * 25.0
 
     return engScore
 
@@ -65,7 +65,7 @@ def financeScore(resume):
         if financeKeyWords[i].lower() in (resume.lower()) != -1:
             (finWordScore[i]) += 1
 
-    finScore = min((float)(sum(finWordScore)+8) / len(financeKeyWords), 1.0) * 25.0
+    finScore = min((float)(sum(finWordScore)+10) / len(financeKeyWords), 1.0) * 25.0
     return finScore
 
 def managementScore(resume):
@@ -82,7 +82,7 @@ def managementScore(resume):
         if managementKeyWords[i].lower() in (resume.lower()) != -1:
             (manWordScore[i]) += 1
 
-    manScore = min((float)(sum(manWordScore)+8) / len(managementKeyWords),1.0) * 25.0
+    manScore = min((float)(sum(manWordScore)+10) / len(managementKeyWords),1.0) * 25.0
 
     return manScore
 
@@ -99,7 +99,7 @@ def artsScore(resume):
         if artsKeyWords[i].lower() in (resume.lower()) != -1:
             (artsWordScore[i]) += 1
 
-    artsScore = min((float)(sum(artsWordScore)+8) / len(artsKeyWords), 1.0) * 25.0
+    artsScore = min((float)(sum(artsWordScore)+10) / len(artsKeyWords), 1.0) * 25.0
 
     return artsScore
 
@@ -132,7 +132,7 @@ def getCategoriesAverage(resume):
     man = managementScore(resume)
     art = artsScore(resume)
 
-    average = (cs + eng + fin + man + art) / 5.0
+    average = (cs + eng + fin + man + art - min(cs,eng,fin,man,art)) / 4.0
 
     return min(1.0, average / 15.0) * 15.0
 
@@ -157,3 +157,6 @@ def printCategoriesAverage(resume):
     return
 
 print(programmingScore(pdftotextmaybe.convert("sample3.pdf")))
+printAllCategoryScores(pdftotextmaybe.convert("sample3.pdf"))
+printCategoriesAverage(pdftotextmaybe.convert("sample3.pdf"))
+
