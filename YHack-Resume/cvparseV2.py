@@ -20,6 +20,16 @@ def init():
     # input the file name
     filename = raw_input("Enter the name of a resume file or \
 directory containing resumes: \n")
+
+    cats = ["Programming Languages", "Computer Science", "Engineering", "Finance", "Business Management", "the Arts"]
+    for i in range(len(cats)):
+        path = raw_input("Please type the name of a file containing all keywords associated with "+ cats[i] + ' separated by line\n\
+(leave blank for defaults)\n')
+        if(path == ""):
+            cats[i] = None
+        else:
+            with open(path, "r") as fin:
+                cats[i] = fin.read().splitlines()
     
     # creates an empty tex file with the results in it
     fout = open("results.tex", "w")
@@ -39,7 +49,7 @@ directory containing resumes: \n")
             else:
                 resume = readFile(os.path.join(filename,doc)).lower()
                 resumes.append(resume)
-        return resumes
+        return (resumes, cats)
     # is .pdf; need to convert to .txt    
     elif filename.endswith(".pdf"):
         resume = pdftotextmaybe.convert(filename)
@@ -47,7 +57,7 @@ directory containing resumes: \n")
         resume = readFile(filename).lower()
     # return resume as a string with different sections
 
-    return resume
+    return (resume, cats)
 
 def category(resume, progWords = None, csWords = None, engWords = None, finWords = None, manWords = None, artWords = None):
     # Return the category that appears the most
@@ -56,12 +66,27 @@ def category(resume, progWords = None, csWords = None, engWords = None, finWords
 
 def overall(resume):
     overall = getCategory.getCategoriesAverage(resume)
+    fout = open("results.tex", "a")
+    fout.write("\\textbf{Average Score: } " + str(tenOverall(overall)) + "\\\\\n")
+    fout.close()
     return overall
+
+def tenCategory(score):
+    return score / 2.5
+
+def tenOverall(score):
+    return score / 1.5
 
 
 def programmingScore(resume):
     proScore = getCategory.programmingScore(resume)
+    fout = open("results.tex", "a")
+    fout.write("score: "+ str(tenProgScore(proScore)) + "\\\\\n")
+    fout.close()
     return proScore
+
+def tenProgScore(score):
+    return score * 2
 
 def gpaScoreCalculator(gpa):
     gpa_unweighted = gpa / 4.00
@@ -182,19 +207,24 @@ def collegeScore(word_tokens):
     "New Mexico State University", "University of Colorado-Denver"]
     short_words = ["university", "for", "and", "get", "the", "art", "ice", "town", "park", "van", "los"]
     i = 0
+    fout = open("results.tex", "a")
     for college in university:
         for word in word_tokens:
             if((word.lower() not in short_words) and (word in college) and (len(word) > 2)):
-                fout = open("results.tex", "a")
-                fout.write("\\textbf{"+ college + "}\\\\\n")
-                fout.close()
+                fout.write("\\textbf{"+ college + "}")
+                
                 i = university.index(college)
                 i = i + 1
                 break   
         if(i != 0):
             break
     score = ((200-i)/200.0) * 15   
+    fout.write(" \\textbf{score:} " + str(tenUniversity(score)) + "\\\\\n")
+    fout.close()
     return score
+
+def tenUniversity(score):
+    return score / 1.5
 
 def wordCountScore(tokens):
     score = 10
@@ -308,7 +338,7 @@ def degreeScore(word_tokens):
             print("The word 'degree' does not appear in the resume.")
     else:
         pass
-    answer = raw_input("Is this what you are looking for? (Y/N)\n")
+    answer = raw_input("Did you find the degree you were looking for? (Y/N)\n")
     # yes if desired degree found else degree not attained or present
     if answer == "yes" or answer == "Y" or answer == "y" or answer == "Yes": score -= 0
     else: score -= 10
@@ -333,7 +363,7 @@ def sectionScore(resume):
 
     return  min(((sum(wordCount) - min(wordCount))) / 450.0, 1.0) * 10
 
-def main(resume):
+def main(resume, cats):
     # initialize variables 
     # have the words as tokens in a list
     tokens = tokenize.input_file_lines(resume,[])
@@ -341,15 +371,6 @@ def main(resume):
     score = 0
 
 
-    cats = ["Programming Languages", "Computer Science", "Engineering", "Finance", "Business Management", "the Arts"]
-    for i in range(len(cats)):
-        path = raw_input("Please type the name of a file containing all keywords associated with "+ cats[i] + ' separated by line\n\
-(leave blank for defaults)\n')
-        if(path == ""):
-            cats[i] = None
-        else:
-            with open(path, "r") as fin:
-                cats[i] = fin.read().splitlines()
     
     # get email
     email = ""
@@ -364,37 +385,29 @@ def main(resume):
     fout.close()
     # category score
     (cat, category_score) = category(resume, cats[0],cats[1],cats[2],cats[3],cats[4],cats[5])
-    print category_score
 
     # overall score
     overall_score = overall(resume)
-    print overall_score
 
     # programming languages score
     programming_score = programmingScore(resume)
-    print programming_score
 
     # GPA score
     gpa_score = gpaScore(word_tokens)
-    print gpa_score
 
     # university score
     college_score = collegeScore(word_tokens)
-    print college_score
 
     # word count score
     word_count_score = wordCountScore(tokens)
-    print word_count_score
 
     # degree score
     degree_score = degreeScore(word_tokens)
-    print degree_score
 
     # sectional score
     section_score = sectionScore(resume)
-    print section_score
 
-    print "finished parsing"
+    print "Finished parsing."
     score = category_score + overall_score + programming_score + \
             gpa_score + college_score + word_count_score + \
             degree_score + section_score
@@ -402,7 +415,7 @@ def main(resume):
     
     fout = open("results.tex", "a")
     fout.write("\\textbf{Best category: } "+cat+"\\\\\n\
-\\textbf{Overall Score: }"+ str(score) + " (out of 10)")
+\\textbf{Overall Score: }"+ str(score/ 10.0) + " (out of 10)")
     fout.close()
 
     return (cat, score, email)
@@ -412,17 +425,17 @@ def readFile(filename, mode="rt"):
     with open(filename, mode) as fin:
         return fin.read()
 
-resume = init()
+(resume, cats) = init()
 
 if type(resume) == list:
     for i in range(len(resume)):
-        print main(resume[i])
+        print main(resume[i], cats)
     fout = open("results.tex", "a")
     fout.write("\\end{document}")
     fout.close()
     subprocess.call('pdflatex results.tex')
 elif resume != "":
-    print main(resume)
+    print main(resume, cats)
     fout = open("results.tex", "a")
     fout.write("\\end{document}")
     fout.close()

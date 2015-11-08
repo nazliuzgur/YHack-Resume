@@ -1,6 +1,10 @@
 import pdftotextmaybe
 
 def programmingScore(resume, progWords = None):
+
+    fout = open("results.tex", "a")
+    fout.write("\\textbf{Programming Languages:} \\\\\n")
+    
     if(progWords == None):
         programming = ["assembly", "bash", " c " "c++", "c#", "coffeescript", "emacs lisp",
          "go!", "groovy", "haskell", "java", "javascript", "matlab", "max MSP", "objective c", 
@@ -9,19 +13,20 @@ def programmingScore(resume, progWords = None):
          "scala", "kdb", "jquery", "mongodb"]
     else:
         programming = progWords
-
     programmingTotal = 0
 
 
     for i in range(len(programming)):
         if programming[i].lower() in resume.lower() != -1:
             programmingTotal += 1
+            if not("#" in programming[i]):
+                fout.write(programming[i]+", ")
+
+
+    fout.close()
 
     progScore = min(programmingTotal/10.0, 1) * 5.0
 
-    fout = open("results.tex", "a")
-    fout.write("\\textbf{Programming Languages:} "+str(progScore)+"\\\\\n")
-    fout.close()
 
     return progScore
 
@@ -146,11 +151,11 @@ def mainCategoryAndScore(resume, progWords = None, csWords = None, engWords = No
     art = artsScore(resume, artWords)
 
     fout = open("results.tex", "a")
-    fout.write("\\textbf{Software:} "+str(cs)+"\\\\\n\
-\\textbf{Engineering:} "+str(eng)+"\\\\\n\
-\\textbf{Finance:} "+str(fin)+"\\\\\n\
-\\textbf{Management Skills:} "+str(man)+"\\\\\n\
-\\textbf{Arts:} "+str(art)+"\\\\\n")
+    fout.write("\\textbf{Software:} "+str(cs)+" (out of 25)\\\\\n\
+\\textbf{Engineering: } "+str(eng)+" (out of 25)\\\\\n\
+\\textbf{Finance:} "+str(fin)+" (out of 25)\\\\\n\
+\\textbf{Management Skills:} "+str(man)+" (out of 25)\\\\\n\
+\\textbf{Arts:} "+str(art)+" (out of 25)\\\\\n")
 
     fout.close()
 
