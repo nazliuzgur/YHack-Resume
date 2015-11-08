@@ -90,40 +90,55 @@ def main(resume):
     for token in word_tokens:
         if "gpa" in token.lower():
             index = word_tokens.index(token)
-            if "/" in word_tokens[index + 1]:
-                words = word_tokens[index + 1].split("/")
-                gpa = float(words[0])
-                if gpa == 4.00:
-                    errors += 0
-                elif gpa >= 3.00 and gpa < 4.00:
-                    errors += 3
-                elif gpa >= 2.00 and gpa < 3.00:
-                    errors += 5
-                else:
-                    errors += 7
-                gpaFound = True
-                for word in words:
-                    gpa = float(word)
+            try:
+                if "/" in word_tokens[index + 1]:
+                    words = word_tokens[index + 1].split("/")
+                    gpa = float(words[0])
                     if gpa == 4.00:
                         errors += 0
                     elif gpa >= 3.00 and gpa < 4.00:
-                        errors += 3
+                        errors += 4
                     elif gpa >= 2.00 and gpa < 3.00:
-                        errors += 5
+                        errors += 6
                     else:
-                        errors += 7
+                        errors += 8
                     gpaFound = True
-            else:
-                gpa = float(word_tokens[index + 1])
-                if gpa == 4.00:
-                    errors += 0
-                elif gpa >= 3.00 and gpa < 4.00:
-                    errors += 3
-                elif gpa >= 2.00 and gpa < 3.00:
-                    errors += 5
                 else:
-                    errors += 7
-                gpaFound = True
+                    gpa = float(word_tokens[index + 1])
+                    if gpa == 4.00:
+                        errors += 0
+                    elif gpa >= 3.00 and gpa < 4.00:
+                        errors += 4
+                    elif gpa >= 2.00 and gpa < 3.00:
+                        errors += 6
+                    else:
+                        errors += 8
+                    gpaFound = True
+            except:
+                if "/" in word_tokens[index - 1]:
+                    words = word_tokens[index - 1].split("/")
+                    gpa = float(words[0])
+                    if gpa == 4.00:
+                        errors += 0
+                    elif gpa >= 3.00 and gpa < 4.00:
+                        errors += 4
+                    elif gpa >= 2.00 and gpa < 3.00:
+                        errors += 6
+                    else:
+                        errors += 8
+                    gpaFound = True
+                else:
+                    gpa = float(word_tokens[index - 1])
+                    if gpa == 4.00:
+                        errors += 0
+                    elif gpa >= 3.00 and gpa < 4.00:
+                        errors += 4
+                    elif gpa >= 2.00 and gpa < 3.00:
+                        errors += 6
+                    else:
+                        errors += 8
+                    gpaFound = True
+
     # a resume with a GPA might indicate a lower GPA
     if gpaFound == False: errors += 9
 
@@ -134,7 +149,7 @@ def main(resume):
             break
 
     # level of degree
-    desiredDegree = raw_input("Degree needed: ")
+    desiredDegree = raw_input("Degree level needed (i.e. 'phd', 'ba', 'bachelor'): ")
     word_tokens_lower = [x.lower() for x in word_tokens]
     # searches for similar words
     degree = difflib.get_close_matches(desiredDegree.lower(), word_tokens_lower)
@@ -151,7 +166,7 @@ def main(resume):
         if degree == [] and close_match_fail == False: 
             answer2 = raw_input("There are no matches. Search again? (Y/N) \n")
             if answer2 == "Y" or answer2 == "y" or answer2 == "yes" or answer2 == "Yes":
-                desiredDegree = raw_input("Degree needed: ")
+                desiredDegree = raw_input("Degree level needed (i.e. 'phd', 'ba', 'bachelor'): ")
                 degree = difflib.get_close_matches(desiredDegree.lower(), word_tokens_lower)
             else:
                 stop_search = True
@@ -170,7 +185,7 @@ def main(resume):
     while (not stop_search):
         answer1 = raw_input("Would you like to search for another degree? (Y/N)\n")
         if answer1 == "Y" or answer1 == "y" or answer1 == "yes" or answer1 == "Yes":
-            desiredDegree = raw_input("Degree needed: ")
+            desiredDegree = raw_input("Degree level needed (i.e. 'phd', 'ba', 'bachelor'): ")
             degree = difflib.get_close_matches(desiredDegree.lower(), word_tokens_lower)
             if degree == []:
                 for word in word_tokens_lower:
@@ -181,7 +196,7 @@ def main(resume):
             if degree == [] and close_match_fail == False:
                 answer3 = raw_input("There are no matches. Search again? (Y/N) \n")
                 if answer3 == "Y" or answer3 == "y" or answer3 == "yes" or answer3 == "Yes":
-                    desiredDegree = raw_input("Degree needed: ")
+                    desiredDegree = raw_input("Degree level needed (i.e. 'phd', 'ba', 'bachelor'): ")
                     degree = difflib.get_close_matches(desiredDegree.lower(), word_tokens_lower)
                 else:
                     stop_search = True
@@ -231,7 +246,7 @@ def main(resume):
         pass
     answer = raw_input("Is this what you are looking for? (Y/N)\n")
     # yes if desired degree found else degree not attained or present
-    if answer == "yes": errors += 0
+    if answer == "yes" or answer == "Y" or answer == "y" or answer == "Yes": errors += 0
     else: errors += 10
 
     # word count under experience/projects/leadership
