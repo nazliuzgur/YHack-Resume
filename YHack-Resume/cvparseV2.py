@@ -304,7 +304,9 @@ def sectionScore(resume):
         else:
             wordCount[currentIndex] += 1
 
-    return  ((sum(wordCount) - min(wordCount))) / 350.0 * 10
+        print(wordCount)
+
+    return  min(((sum(wordCount) - min(wordCount))) / 450.0, 1.0) * 10
 
 def main(resume):
     # initialize variables 
