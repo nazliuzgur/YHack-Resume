@@ -31,9 +31,9 @@ def init():
     # good enough for the demo, lol
     return resume
 
-def category(resume):
+def category(resume, progWords = None, csWords = None, engWords = None, finWords = None, manWords = None, artWords = None):
     # Return the category that appears the most
-    (cat, score) = getCategory.mainCategoryAndScore(resume)
+    (cat, score) = getCategory.mainCategoryAndScore(resume, progWords, csWords, engWords, finWords, manWords, artWords)
     return (cat, score)
 
 def sectionScore(resume):
@@ -55,6 +55,7 @@ def sectionScore(resume):
         else:
             wordCount[currentIndex] += 1
 
+    print(wordCount)
     return  ((sum(wordCount) - min(wordCount))) / 350.0 * 10
 
 def main(resume):
@@ -72,7 +73,16 @@ def main(resume):
     errors = 0
     score = 100
     email = ""
+    cats = ["Programming Languages", "Computer Science", "Engineering", "Finance", "Business Management", "the Arts"]
 
+    for i in range(len(cats)):
+        path = raw_input("Please type the name of a file containing all keywords associated with "+ cats[i] + ' separated by line\n\
+(leave blank for defaults)\n')
+        if(path == ""):
+            cats[i] = None
+        else:
+            with open(path, "r") as fin:
+                cats[i] = fin.read().splitlines()
     # word count
     for tok in tokens:
         if tok != "":
@@ -239,7 +249,7 @@ def main(resume):
     print "finished parsing"
     score -= errors
         
-    (cat, c_score) = category(resume)
+    (cat, c_score) = category(resume, cats[0],cats[1],cats[2],cats[3],cats[4],cats[5])
     return (cat, score, email)
 
 def readFile(filename, mode="rt"):

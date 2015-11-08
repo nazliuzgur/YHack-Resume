@@ -1,11 +1,14 @@
 import pdftotextmaybe
 
-def programmingScore(resume):
-    programming = ["assembly", "bash", " c " "c++", "c#", "coffeescript", "emacs lisp",
-     "go!", "groovy", "haskell", "java", "javascript", "matlab", "max MSP", "objective c", 
-     "perl", "php","html", "xml", "css", "processing", "python", "ruby", "sml", "swift", 
-     "latex" "unity", "unix" "visual basic" "wolfram language", "xquery", "sql", "node.js", 
-     "scala", "kdb", "jquery", "mongodb"]
+def programmingScore(resume, progWords = None):
+    if(progWords == None):
+        programming = ["assembly", "bash", " c " "c++", "c#", "coffeescript", "emacs lisp",
+         "go!", "groovy", "haskell", "java", "javascript", "matlab", "max MSP", "objective c", 
+         "perl", "php","html", "xml", "css", "processing", "python", "ruby", "sml", "swift", 
+         "latex" "unity", "unix" "visual basic" "wolfram language", "xquery", "sql", "node.js", 
+         "scala", "kdb", "jquery", "mongodb"]
+    else:
+        programming = progWords
 
     programmingTotal = 0
 
@@ -17,12 +20,16 @@ def programmingScore(resume):
 
     return progScore
 
-def softwareScore(resume):
-    csKeyWords = ["computer", "software", "engineering", "computer science", "prototype", "structured design",
-    "code development", "communication skills", "problem solving", "software design", "systems", "web", "client",
-    "testing", "SDLC", "development process", "database management systems", "web applications", "code"
-    "user support", "programming", "developing", "software", "server administration", "machine learning",
-    "alogorithms", "team", "programming language", "database", "artificial intelligence", "administrator"]
+def softwareScore(resume, csWords = None):
+    if( csWords == None):
+        csKeyWords = ["computer", "software", "engineering", "computer science", "prototype", "structured design",
+        "code development", "communication skills", "problem solving", "software design", "systems", "web", "client",
+        "testing", "SDLC", "development process", "database management systems", "web applications", "code"
+        "user support", "programming", "developing", "software", "server administration", "machine learning",
+        "alogorithms", "team", "programming language", "database", "artificial intelligence", "administrator"]
+    else:
+        csKeyWords = csWords
+
 
     csWordScore = []
     for i in range(len(csKeyWords)):
@@ -34,12 +41,16 @@ def softwareScore(resume):
 
     return csScore
 
-def engineeringScore(resume):
-    engineeringKeyWords = ["chemical", "civil", "engineering", "mechanical", "CAD", "design",
-    "mechanics", "analysis", "systems", "technical", "autodesk", "inventor", "skills", "realization",
-    "technology", "functionality", "hardware", "design process", "process control", "protyping", "team",
-    "project conceptualization", "design verification", "project management", "structural design", 
-    "build", "modeling", "buildings", "tests", "application"]
+def engineeringScore(resume, engWords = None):
+    if(engWords ==  None):
+        engineeringKeyWords = ["chemical", "civil", "engineering", "mechanical", "CAD", "design",
+        "mechanics", "analysis", "systems", "technical", "autodesk", "inventor", "skills", "realization",
+        "technology", "functionality", "hardware", "design process", "process control", "protyping", "team",
+        "project conceptualization", "design verification", "project management", "structural design", 
+        "build", "modeling", "buildings", "tests", "application"]
+    else:
+        engineeringKeyWords = engWords
+
 
     engWordScore = []
     for i in range(len(engineeringKeyWords)):
@@ -51,13 +62,18 @@ def engineeringScore(resume):
 
     return engScore
 
-def financeScore(resume):
-    financeKeyWords = ["financial reporting", "excel", "finance", "trend analysis",
-     "financial statement", "result analysis", "strategic planning", "develop trends",
-    "DCF", "presentation skills", "team player", "financial analysis", "forecasting",
-    "policy development", "business policies", "powerpoint", "microsoft word", "analytical",
-    "accounting", "team player", "team", "ability", "accounting", "accountant", "balance sheet",
-    "liquidy", "money", "stocks"]
+
+def financeScore(resume, finWords = None):
+    if finWords == None:
+        financeKeyWords = ["financial reporting", "excel", "finance", "trend analysis",
+         "financial statement", "result analysis", "strategic planning", "develop trends",
+        "DCF", "presentation skills", "team player", "financial analysis", "forecasting",
+        "policy development", "business policies", "powerpoint", "microsoft word", "analytical",
+        "accounting", "team player", "team", "ability", "accounting", "accountant", "balance sheet",
+        "liquidy", "money", "stocks"]
+    else:
+        financeKeyWords = finWords
+
 
     finWordScore = []
     for i in range(len(financeKeyWords)):
@@ -68,13 +84,16 @@ def financeScore(resume):
     finScore = min((float)(sum(finWordScore)+10) / len(financeKeyWords), 1.0) * 25.0
     return finScore
 
-def managementScore(resume):
-    managementKeyWords = ["data analysis", "automation", "planning", "ability to plan",
-    "customer", "interaction", "consumer", "implement", "analytical", "network",
-    "skill analysis", "hiring", "firing", "business development", "contract negotiation",
-    "budget", "leadership", "operational development", "evaluations", "management",
-    "business", "project planning", "production schedule", "responsibility", "budgeting",
-    "optimization", "decision making", "organization", "business"]
+def managementScore(resume, manWords = None):
+    if manWords == None:
+        managementKeyWords = ["data analysis", "automation", "planning", "ability to plan",
+        "customer", "interaction", "consumer", "implement", "analytical", "network",
+        "skill analysis", "hiring", "firing", "business development", "contract negotiation",
+        "budget", "leadership", "operational development", "evaluations", "management",
+        "business", "project planning", "production schedule", "responsibility", "budgeting",
+        "optimization", "decision making", "organization", "business"]
+    else:
+        managementKeyWords = manWords
 
     manWordScore = []
     for i in range(len(managementKeyWords)):
@@ -86,12 +105,15 @@ def managementScore(resume):
 
     return manScore
 
-def artsScore(resume):
-    artsKeyWords = ["performance", "exhibit", "music", "art", "writing", "expressive",
-    "editing", "editorial", "social work", "design", "artist", "musician", "collaborative",
-    "group", "program", "exhibition", "media", "blog", "journalism", "creative", "innovative",
-    "workshop", "master class", "teaching", "lectures", "practice", "studio", "newspaper",
-    "english"]
+def artsScore(resume, artWords = None):
+    if artWords == None:
+        artsKeyWords = ["performance", "exhibit", "music", "art", "writing", "expressive",
+        "editing", "editorial", "social work", "design", "artist", "musician", "collaborative",
+        "group", "program", "exhibition", "media", "blog", "journalism", "creative", "innovative",
+        "workshop", "master class", "teaching", "lectures", "practice", "studio", "newspaper",
+        "english"]
+    else:
+        artsKeyWords = artWords
 
     artsWordScore = []
     for i in range(len(artsKeyWords)):
@@ -103,12 +125,12 @@ def artsScore(resume):
 
     return artsScore
 
-def mainCategoryAndScore(resume):
-    cs = softwareScore(resume)
-    eng = engineeringScore(resume)
-    fin = financeScore(resume)
-    man = managementScore(resume)
-    art = artsScore(resume)
+def mainCategoryAndScore(resume, progWords = None, csWords = None, engWords = None, finWords = None, manWords = None, artWords = None):
+    cs = softwareScore(resume, csWords)
+    eng = engineeringScore(resume, engWords)
+    fin = financeScore(resume, finWords)
+    man = managementScore(resume, manWords)
+    art = artsScore(resume, artWords)
 
     a = ["computer science", "engineering", "finance", "business management", "arts"]
     b = [cs, eng, fin, man, art]
@@ -120,6 +142,7 @@ def mainCategoryAndScore(resume):
         if (b[x]) > maxScore:
             maxIndex = x
             maxScore = b[x]
+            print a[x]
 
     c = zip(a,b)
 
