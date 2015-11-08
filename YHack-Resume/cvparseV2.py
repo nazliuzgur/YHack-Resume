@@ -178,10 +178,10 @@ def wordCountScore(tokens):
         if tok != "":
             count += 1
     # 475 words -> average amount of words on one page
-    if count == 475: score -= 0
+    if count == 400: score -= 0
     # accounts for resumes too short and too long
     else:
-        score -= min(abs(475 - count) / 20, 5)
+        score -= min(abs(400 - count) / 20, 5)
     return score
 
 def degreeScore(word_tokens):
