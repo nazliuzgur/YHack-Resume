@@ -50,7 +50,7 @@ def sectionScore(resume):
             currentIndex = 1
         elif(x.strip("!@#$%^&*()_+|}{:?") in ["leadership"] and currentIndex != 2):
             currentIndex = 2    
-        elif(x.strip("!@#$%^&*()_+|}{:?") in ["education", ,"activites","skils", "interests", "extracurricular", "honors", "references", "awards", "acheivements"]):
+        elif(x.strip("!@#$%^&*()_+|}{:?") in ["education","activites","skils", "interests", "extracurricular", "honors", "references", "awards", "acheivements"]):
             currentIndex = -1
         else:
             wordCount[currentIndex] += 1
