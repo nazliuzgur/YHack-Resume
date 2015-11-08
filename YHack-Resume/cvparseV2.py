@@ -36,32 +36,6 @@ def category(resume):
     (cat, score) = getCategory.mainCategoryAndScore(resume)
     return (cat, score)
 
-def words(text): return re.findall("[a-z]+", text.lower())
-
-def train(features):
-    model = collections.defaultdict(lambda: 1)
-    for f in features:
-        model[f] += 1
-    return model
-
-def edits1(word):
-    splits = [(word[:i], word[i:]) for i in xrange(len(word) + 1)]
-    deletes = [a + b[1:] for a, b in splits if b]
-    transposes = [a + b[1] + b[0] + b[2:] for a, b in splits if len(b) > 1]
-    replaces = [a + c + b[1:] for a, b in splits for c in alphabet if b]
-    inserts = [a + c + b for a, b in splits for c in alphabet]
-    return set(deletes + transposes + replaces + inserts)
-
-def known_edits2(word):
-    return set(e2 for e1 in edits1(word) for e2 in edits1(e1) if e2 in NWORDS)
-
-def known(words):
-    return set(w for w in words if w in NWORDS)
-
-def correct(word):
-    candidates = known([word]) or known(edits1(word)) or known_edits2(word) or [word]
-    return max(candidates, key=NWORDS.get)
-
 def sectionScore(resume):
     titles = ["work experience", "experience", "employment", "education", "skills",
         "interests", "extracurricular", "projects", "leadership", "honors", "references", 
@@ -176,37 +150,27 @@ def main(resume):
                 close_match_fail = True
                 close_match = word
                 break
-    quit = False
-
     stop_search = False
-    while (not quit):
+    while (not stop_search):
         if degree == [] and close_match_fail == False: 
             answer2 = raw_input("There are no matches. Search again? (Y/N) \n")
             if answer2 == "Y" or answer2 == "y" or answer2 == "yes" or answer2 == "Yes":
                 desiredDegree = raw_input("Degree needed: ")
                 degree = difflib.get_close_matches(desiredDegree.lower(), word_tokens_lower)
             else:
-                quit = True
                 stop_search = True
         else:
             if close_match_fail == True:
                 print("Closest match to " + desiredDegree + " is " +
                 close_match + ".")
+                stop_search = True
             else:
                 print("Closest match to " + desiredDegree + " is " +
                     degree[0] + ".")
-
-    while (not(quit)):
-        answer1 = raw_input("Would you like to search for another degree? (Y/N)")
-        if answer1 == "Y" or answer1 == "y" or answer == "yes" or answer == "Yes":
-            desiredDegree = raw_input("Degree needed: ")
-            degree = difflib.get_close_matches(desiredDegree, word_tokens)
-            print("Closest match to " + desiredDegree + " is " +
-                    degree + ".")
-        else:
-            quit = True
+                stop_search = True
     close_match_fail = False
     close_match = ""
+    stop_search = False
     while (not stop_search):
         answer1 = raw_input("Would you like to search for another degree? (Y/N)\n")
         if answer1 == "Y" or answer1 == "y" or answer1 == "yes" or answer1 == "Yes":
@@ -232,7 +196,7 @@ def main(resume):
                 else:
                     print("Closest match to " + desiredDegree + " is " +
                             degree[0] + ".")
-        else :
+        else:
             stop_search = True
     degreeFound = False
     answer4 = raw_input("Would you like to search the word 'degree'? (Y/N) \n")
@@ -288,10 +252,5 @@ def readFile(filename, mode="rt"):
         return fin.read()
 
 resume = init()
-if resume != ("", ""):
-    print main(resume)
-resume = init()
-NWORDS = train(words(file("dictionary.txt").read()))
-alphabet = "abcdefghijklmnopqrstuvwxyz"
 if resume != "":
     print main(resume)
