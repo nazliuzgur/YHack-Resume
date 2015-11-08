@@ -11,18 +11,19 @@ def programmingScore(resume):
 
     for i in range(len(programming)):
         if programming[i].lower() in resume.lower() != -1:
-            programmingScore += 1
+            programmingTotal += 1
 
-    programmingScore = min(programmingTotal/8.0, 1) * 5.0
+    progScore = min(programmingTotal/10.0, 1) * 5.0
+
+    return progScore
 
 def softwareScore(resume):
     csKeyWords = ["computer", "software", "engineering", "computer science", "prototype", "structured design",
     "code development", "communication skills", "problem solving", "software design", "systems", "web", "client",
     "testing", "SDLC", "development process", "database management systems", "web applications", "code"
     "user support", "programming", "developing", "software", "server administration", "machine learning",
-    "alogorithms", "team", "programming language"]
+    "alogorithms", "team", "programming language", "database", "artificial intelligence", "administrator"]
 
-    print(len(csKeyWords))
     csWordScore = []
     for i in range(len(csKeyWords)):
         csWordScore.append(0)
@@ -39,8 +40,6 @@ def engineeringScore(resume):
     "technology", "functionality", "hardware", "design process", "process control", "protyping", "team",
     "project conceptualization", "design verification", "project management", "structural design", 
     "build", "modeling", "buildings", "tests", "application"]
-    
-    print(len(engineeringKeyWords))
 
     engWordScore = []
     for i in range(len(engineeringKeyWords)):
@@ -60,8 +59,6 @@ def financeScore(resume):
     "accounting", "team player", "team", "ability", "accounting", "accountant", "balance sheet",
     "liquidy", "money", "stocks"]
 
-    print(len(financeKeyWords))
-
     finWordScore = []
     for i in range(len(financeKeyWords)):
         finWordScore.append(0)
@@ -79,8 +76,6 @@ def managementScore(resume):
     "business", "project planning", "production schedule", "responsibility", "budgeting",
     "optimization", "decision making", "organization", "business"]
 
-    print(len(managementKeyWords))
-
     manWordScore = []
     for i in range(len(managementKeyWords)):
         manWordScore.append(0)
@@ -97,8 +92,6 @@ def artsScore(resume):
     "group", "program", "exhibition", "media", "blog", "journalism", "creative", "innovative",
     "workshop", "master class", "teaching", "lectures", "practice", "studio", "newspaper",
     "english"]
-
-    print(len(artsKeyWords))
 
     artsWordScore = []
     for i in range(len(artsKeyWords)):
@@ -132,6 +125,17 @@ def mainCategoryAndScore(resume):
 
     return c[maxIndex]
 
+def getCategoriesAverage(resume):
+    cs = softwareScore(resume)
+    eng = engineeringScore(resume)
+    fin = financeScore(resume)
+    man = managementScore(resume)
+    art = artsScore(resume)
+
+    average = (cs + eng + fin + man + art) / 5.0
+
+    return min(1.0, average / 15.0) * 15.0
+
 def printAllCategoryScores(resume):
     cs = softwareScore(resume)
     eng = engineeringScore(resume)
@@ -148,6 +152,8 @@ def printAllCategoryScores(resume):
 
     return
 
-print(pdftotextmaybe.convert("sample.pdf"))
+def printCategoriesAverage(resume):
+    print(getCategoriesAverage(resume))
+    return
 
-printAllCategoryScores(pdftotextmaybe.convert("sample.pdf"))
+print(programmingScore(pdftotextmaybe.convert("sample3.pdf")))
