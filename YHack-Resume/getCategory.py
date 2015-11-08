@@ -45,9 +45,6 @@ def softwareScore(resume, csWords = None):
     csScore = min((float)(sum(csWordScore)+10) / (len(csKeyWords)),1.0) * 25.0
 
 
-    fout = open("results.tex", "a")
-    fout.write("\\textbf{Software:} "+str(csScore)+"\\\\\n")
-    fout.close()
 
     return csScore
 
@@ -71,9 +68,6 @@ def engineeringScore(resume, engWords = None):
     engScore = min((float)(sum(engWordScore)+10) / len(engineeringKeyWords),1.0) * 25.0
 
 
-    fout = open("results.tex", "a")
-    fout.write("\\textbf{Engineering:} "+str(engScore)+"\\\\\n")
-    fout.close()
 
     return engScore
 
@@ -99,10 +93,6 @@ def financeScore(resume, finWords = None):
     finScore = min((float)(sum(finWordScore)+10) / len(financeKeyWords), 1.0) * 25.0
 
 
-    fout = open("results.tex", "a")
-    fout.write("\\textbf{Finance:} "+str(finScore)+"\\\\\n")
-    fout.close()
-
     return finScore
 
 def managementScore(resume, manWords = None):
@@ -125,10 +115,6 @@ def managementScore(resume, manWords = None):
     manScore = min((float)(sum(manWordScore)+10) / len(managementKeyWords),1.0) * 25.0
 
 
-    fout = open("results.tex", "a")
-    fout.write("\\textbf{Management Skills:} "+str(manScore)+"\\\\\n")
-    fout.close()
-
     return manScore
 
 def artsScore(resume, artWords = None):
@@ -150,10 +136,6 @@ def artsScore(resume, artWords = None):
     artsScore = min((float)(sum(artsWordScore)+10) / len(artsKeyWords), 1.0) * 25.0
 
 
-    fout = open("results.tex", "a")
-    fout.write("\\textbf{Arts:} "+str(artsScore)+"\\\\\n")
-    fout.close()
-
     return artsScore
 
 def mainCategoryAndScore(resume, progWords = None, csWords = None, engWords = None, finWords = None, manWords = None, artWords = None):
@@ -162,6 +144,15 @@ def mainCategoryAndScore(resume, progWords = None, csWords = None, engWords = No
     fin = financeScore(resume, finWords)
     man = managementScore(resume, manWords)
     art = artsScore(resume, artWords)
+
+    fout = open("results.tex", "a")
+    fout.write("\\textbf{Software:} "+str(cs)+"\\\\\n\
+\\textbf{Engineering:} "+str(eng)+"\\\\\n\
+\\textbf{Finance:} "+str(fin)+"\\\\\n\
+\\textbf{Management Skills:} "+str(man)+"\\\\\n\
+\\textbf{Arts:} "+str(art)+"\\\\\n")
+
+    fout.close()
 
     a = ["computer science", "engineering", "finance", "business management", "arts"]
     b = [cs, eng, fin, man, art]
@@ -210,7 +201,7 @@ def printCategoriesAverage(resume):
     print(getCategoriesAverage(resume))
     return
 
-print(programmingScore(pdftotextmaybe.convert("sample3.pdf")))
-printAllCategoryScores(pdftotextmaybe.convert("sample3.pdf"))
-printCategoriesAverage(pdftotextmaybe.convert("sample3.pdf"))
+#print(programmingScore(pdftotextmaybe.convert("sample3.pdf")))
+#printAllCategoryScores(pdftotextmaybe.convert("sample3.pdf"))
+#printCategoriesAverage(pdftotextmaybe.convert("sample3.pdf"))
 

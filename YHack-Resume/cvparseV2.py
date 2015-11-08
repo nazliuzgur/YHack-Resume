@@ -186,7 +186,7 @@ def collegeScore(word_tokens):
         for word in word_tokens:
             if((word.lower() not in short_words) and (word in college) and (len(word) > 2)):
                 fout = open("results.tex", "a")
-                fout.write("\\textbf{"+ college + "}")
+                fout.write("\\textbf{"+ college + "}\\\\\n")
                 fout.close()
                 i = university.index(college)
                 i = i + 1
