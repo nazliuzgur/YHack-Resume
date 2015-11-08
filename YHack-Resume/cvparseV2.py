@@ -180,25 +180,20 @@ def collegeScore(word_tokens):
     "University of North Carolina-Charlotte", "Ashland University",
     "Indiana University-Purdue University-Indianapolis", "Louisiana Tech University",
     "New Mexico State University", "University of Colorado-Denver"]
+    short_words = ["university", "for", "and", "get", "the", "art", "ice", "town", "park", "van", "los"]
     i = 0
-    score = 15
     for college in university:
         for word in word_tokens:
-            if(word != "University"):
-                if(word in college):
-
-                    fout = open("results.tex", "a")
-                    fout.write("\\textbf{"+ college + "}")
-                    fout.close()
-                    i = university.index(college)
-                    i = i + 1
-                    break   
+            if((word.lower() not in short_words) and (word in college) and (len(word) > 2)):
+                fout = open("results.tex", "a")
+                fout.write("\\textbf{"+ college + "}")
+                fout.close()
+                i = university.index(college)
+                i = i + 1
+                break   
         if(i != 0):
             break
-    if(i < 20):
-        score -= 0
-    if(i == 0): # if the university isn't here
-        score -= 13
+    score = ((200-i)/200.0) * 15   
     return score
 
 def wordCountScore(tokens):
@@ -335,8 +330,6 @@ def sectionScore(resume):
             currentIndex = -1
         else:
             wordCount[currentIndex] += 1
-
-        print(wordCount)
 
     return  min(((sum(wordCount) - min(wordCount))) / 450.0, 1.0) * 10
 
