@@ -36,56 +36,21 @@ def category(resume):
     (cat, score) = getCategory.mainCategoryAndScore(resume)
     return (cat, score)
 
-def sectionScore(resume):
-    section_tokens = tokenize.input_file_words(resume,[])
-    employmentSection = false
-    projectSection = false
-    leaderSection = false
-    currentIndex = -1
-    wordCount = [0,0,0]
-    for x.lower in section_tokens: 
-        if(x.strip("!@#$%^&*()_+|}{:?") in ["work experience", "employment", "experience"] and currentIndex != 0):
-            currentIndex = 0
-        elif(x.strip("!@#$%^&*()_+|}{:?") in ["publications", "projects", "research"] and currentIndex != 1):
-            currentIndex = 1
-        elif(x.strip("!@#$%^&*()_+|}{:?") in ["leadership"] and currentIndex != 2):
-            currentIndex = 2    
-        elif(x.strip("!@#$%^&*()_+|}{:?") in ["education","activites","skils", "interests", "extracurricular", "honors", "references", "awards", "acheivements"]):
-            currentIndex = -1
-        else:
-            wordCount[currentIndex] += 1
+def overall(resume):
+    overall = getCategory.getCategoriesAverage(resume)
+    return overall
 
-    return  ((sum(wordCount) - min(wordCount))) / 350.0 * 10
+def programmingScore(resume):
+    proScore = getCategory.programmingScore(resume)
+    return proScore
 
-def main(resume):
-    # initialize variables 
-    # have the words as tokens in a list
-    tokens = tokenize.input_file_lines(resume,[])
-    # current section of resume
-    current_title = ""
-    # number of words
-    count = 0
-    # "errors" will be taken out of possible score of 100
-    # 100 is an impressive resume in contrast to 
-    # 0, which would be a resume not suitable for the job or
-    # not meeting requirements of the job
-    errors = 0
-    score = 100
-    email = ""
+def gpaScoreCalculator(gpa):
+    gpa_unweighted = gpa / 4.00
+    gpa_scaled = gpa_unweighted * 10
+    return gpa_scaled
 
-    # word count
-    for tok in tokens:
-        if tok != "":
-            count += 1
-    # 475 words -> average amount of words on one page
-    if count == 475: errors += 0
-    # accounts for resumes too short and too long
-    else:
-        errors += min(abs(475-count)/20, 5)
-
-    # GPA
-    word_tokens = tokenize.input_file_words(resume,[])
-    # print word_tokens
+def gpaScore(word_tokens):
+    score = 0
     gpaFound = False
     for token in word_tokens:
         if "gpa" in token.lower():
@@ -94,61 +59,28 @@ def main(resume):
                 if "/" in word_tokens[index + 1]:
                     words = word_tokens[index + 1].split("/")
                     gpa = float(words[0])
-                    if gpa == 4.00:
-                        errors += 0
-                    elif gpa >= 3.00 and gpa < 4.00:
-                        errors += 4
-                    elif gpa >= 2.00 and gpa < 3.00:
-                        errors += 6
-                    else:
-                        errors += 8
+                    score = gpaScoreCalculator(gpa)
                     gpaFound = True
                 else:
                     gpa = float(word_tokens[index + 1])
-                    if gpa == 4.00:
-                        errors += 0
-                    elif gpa >= 3.00 and gpa < 4.00:
-                        errors += 4
-                    elif gpa >= 2.00 and gpa < 3.00:
-                        errors += 6
-                    else:
-                        errors += 8
+                    score = gpaScoreCalculator(gpa)
                     gpaFound = True
             except:
                 if "/" in word_tokens[index - 1]:
                     words = word_tokens[index - 1].split("/")
                     gpa = float(words[0])
-                    if gpa == 4.00:
-                        errors += 0
-                    elif gpa >= 3.00 and gpa < 4.00:
-                        errors += 4
-                    elif gpa >= 2.00 and gpa < 3.00:
-                        errors += 6
-                    else:
-                        errors += 8
+                    score = gpaScoreCalculator(gpa)
                     gpaFound = True
                 else:
                     gpa = float(word_tokens[index - 1])
-                    if gpa == 4.00:
-                        errors += 0
-                    elif gpa >= 3.00 and gpa < 4.00:
-                        errors += 4
-                    elif gpa >= 2.00 and gpa < 3.00:
-                        errors += 6
-                    else:
-                        errors += 8
+                    score = gpaScoreCalculator(gpa)
                     gpaFound = True
 
     # a resume with a GPA might indicate a lower GPA
-    if gpaFound == False: errors += 9
+    if gpaFound == False: score = gpaScoreCalculator(2.5)
+    return score
 
-    # get email
-    for token in word_tokens:
-        if "@" in token:
-            email = token
-            break
-
-    # get university
+def collegeScore(word_tokens):
     university = ["Carnegie Mellon University", "Princeton University",
     "Harvard University", "Yale University", "Columbia University",
     "Stanford University", "University of Chicago",
@@ -221,6 +153,7 @@ def main(resume):
     "Indiana University-Purdue University-Indianapolis", "Louisiana Tech University",
     "New Mexico State University", "University of Colorado-Denver"]
     i = 0
+    score = 15
     for college in university:
         for word in word_tokens:
             if(word != "University"):
@@ -231,12 +164,28 @@ def main(resume):
         if(i != 0):
             break
     if(i < 20):
-        errors += 0
+        score -= 0
     if(i == 0): # if the university isn't here
-        errors += 13
+        score -= 13
+    return score
 
+def wordCountScore(tokens):
+    score = 10
+    # number of words
+    count = 0
+    # word count
+    for tok in tokens:
+        if tok != "":
+            count += 1
+    # 475 words -> average amount of words on one page
+    if count == 475: score -= 0
+    # accounts for resumes too short and too long
+    else:
+        score -= min(abs(475 - count) / 20, 5)
+    return score
 
-    # level of degree
+def degreeScore(word_tokens):
+    score = 10
     desiredDegree = raw_input("Degree level needed (i.e. 'phd', 'ba', 'bachelor'): ")
     word_tokens_lower = [x.lower() for x in word_tokens]
     # searches for similar words
@@ -334,15 +283,80 @@ def main(resume):
         pass
     answer = raw_input("Is this what you are looking for? (Y/N)\n")
     # yes if desired degree found else degree not attained or present
-    if answer == "yes" or answer == "Y" or answer == "y" or answer == "Yes": errors += 0
-    else: errors += 10
+    if answer == "yes" or answer == "Y" or answer == "y" or answer == "Yes": score -= 0
+    else: score -= 10
+    return score
 
-    # word count under experience/projects/leadership
+def sectionScore(resume):
+    section_tokens = tokenize.input_file_words(resume,[])
+    currentIndex = -1
+    wordCount = [0,0,0]
+    for x in section_tokens: 
+        x = x.lower()
+        if(x.strip("!@#$%^&*()_+|}{:?") in ["work experience", "employment", "experience"] and currentIndex != 0):
+            currentIndex = 0
+        elif(x.strip("!@#$%^&*()_+|}{:?") in ["publications", "projects", "research"] and currentIndex != 1):
+            currentIndex = 1
+        elif(x.strip("!@#$%^&*()_+|}{:?") in ["leadership","leadership experience"] and currentIndex != 2):
+            currentIndex = 2    
+        elif(x.strip("!@#$%^&*()_+|}{:?") in ["education","activites","skils", "interests", "extracurricular", "honors", "references", "awards", "acheivements"]):
+            currentIndex = -1
+        else:
+            wordCount[currentIndex] += 1
+
+    return  ((sum(wordCount) - min(wordCount))) / 350.0 * 10
+
+def main(resume):
+    # initialize variables 
+    # have the words as tokens in a list
+    tokens = tokenize.input_file_lines(resume,[])
+    word_tokens = tokenize.input_file_words(resume,[])
+    score = 0
+    
+    # get email
+    email = ""
+    for token in word_tokens:
+        if "@" in token:
+            email = token
+            break
+
+    # category score
+    (cat, category_score) = category(resume)
+    print category_score
+
+    # overall score
+    overall_score = overall(resume)
+    print overall_score
+
+    # programming languages score
+    programming_score = programmingScore(resume)
+    print programming_score
+
+    # GPA score
+    gpa_score = gpaScore(word_tokens)
+    print gpa_score
+
+    # university score
+    college_score = collegeScore(word_tokens)
+    print college_score
+
+    # word count score
+    word_count_score = wordCountScore(tokens)
+    print word_count_score
+
+    # degree score
+    degree_score = degreeScore(word_tokens)
+    print degree_score
+
+    # sectional score
+    section_score = sectionScore(resume)
+    print section_score
 
     print "finished parsing"
-    score -= errors
-        
-    (cat, c_score) = category(resume)
+    score = category_score + overall_score + programming_score + \
+            gpa_score + college_score + word_count_score + \
+            degree_score + section_score
+
     return (cat, score, email)
 
 def readFile(filename, mode="rt"):
