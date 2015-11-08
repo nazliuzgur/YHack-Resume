@@ -184,7 +184,7 @@ def collegeScore(word_tokens):
     score = 15
     for college in university:
         for word in word_tokens:
-            if(word != "University"):
+            if(word != "university"):
                 if(word in college):
 
                     fout = open("results.tex", "a")
@@ -192,7 +192,7 @@ def collegeScore(word_tokens):
                     fout.close()
                     i = university.index(college)
                     i = i + 1
-                    break   
+            break   
         if(i != 0):
             break
     if(i < 20):
@@ -335,8 +335,6 @@ def sectionScore(resume):
             currentIndex = -1
         else:
             wordCount[currentIndex] += 1
-
-        print(wordCount)
 
     return  min(((sum(wordCount) - min(wordCount))) / 450.0, 1.0) * 10
 
