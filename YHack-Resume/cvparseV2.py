@@ -63,10 +63,6 @@ def correct(word):
     return max(candidates, key=NWORDS.get)
 
 def sectionScore(resume):
-    titles = ["work experience", "experience", "employment", "education", "skills",
-        "interests", "extracurricular", "projects", "leadership", "honors", "references", 
-        "awards", "acheivements"]
-
     section_tokens = tokenize.input_file_words(resume,[])
     employmentSection = false
     projectSection = false
@@ -78,7 +74,7 @@ def sectionScore(resume):
             currentIndex = 0
         elif(x.strip("!@#$%^&*()_+|}{:?") in ["publications", "projects", "research"] and currentIndex != 1):
             currentIndex = 1
-        elif(x.strip("!@#$%^&*()_+|}{:?") in ["leadership"] and currentIndex != 2):
+        elif(x.strip("!@#$%^&*()_+|}{:?") in ["leadership", "activities"] and currentIndex != 2):
             currentIndex = 2    
         elif(x.strip("!@#$%^&*()_+|}{:?") in ["education", "skils", "interests", "extracurricular", "honors", "references", "awards", "acheivements"]):
             currentIndex = -1
