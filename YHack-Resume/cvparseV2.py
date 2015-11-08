@@ -166,35 +166,39 @@ def main(resume, titles):
                             degree[0] + ".")
         else :
             stop_search = True
+    degreeFound = False
     answer4 = raw_input("Would you like to search the word 'degree'? (Y/N) \n")
     if answer4 == "Y" or answer4 == "y" or answer4 == "yes" or answer4 == "Yes":
         print("Searching 'degree' and returning adjacent words...") 
         for word in word_tokens_lower:
-            if ("degree" not in word):
-                print("The word 'degree' is not found in the resume.")
-                break
-            else:
+            if ("degree" in word):
                 index = word_tokens_lower.index(word)
                 if index - 1 >= 0 and index + 1 < len(word_tokens_lower):
                     prev_word = word_tokens_lower[index - 1]
                     after_word = word_tokens_lower[index + 1]
                     print("Word before 'degree': " + prev_word)
                     print("Word after 'degree': " + after_word)
+                    degreeFound = True
                     break
                 elif index - 1 >= 0 and index + 1 >= len(word_tokens_lower):
                     prev_word = word_tokens_lower[index - 1]
                     print("Word before 'degree': " + prev_word + "\n")
                     print("No word found after 'degree'.")
+                    degreeFound = True
                     break
                 elif index - 1 < 0 and index + 1 < len(word_tokens_lower):
                     after_word = word_tokens_lower[index + 1]
                     print("Word after 'degree': " + after_word + "\n")
                     print("No word found before 'degree'.")
+                    degreeFound = True
                     break
                 else:
                     # should not happen
                     print("The only word in the resume is 'degree'.")
+                    degreeFound = True
                     break
+        if degreeFound == False:
+            print("The word 'degree' does not appear in the resume.")
     else:
         pass
     answer = raw_input("Is this what you are looking for? (Y/N)\n")
@@ -203,7 +207,6 @@ def main(resume, titles):
     else: errors += 10
 
     # word count under experience/projects/leadership
-    print tokens
 
     print "finished parsing"
     score -= errors
