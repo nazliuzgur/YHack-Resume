@@ -8,6 +8,7 @@ import os
 import tokenize
 import pdftotextmaybe
 import getCategory
+import difflib
 
 def init():
 
@@ -83,54 +84,117 @@ def correct(word):
 
 def main(resume, titles):
     # initialize variables 
-    tokens = tokenize.input_file(resume,[]) # have the words as tokens in a list
+    tokens = tokenize.input_file_lines(resume,[]) # have the words as tokens in a list
     current_title = ""
     count = 0 # the count
     errors = 0
     score = 100
+    email = ""
 
-    for token in tokens:
-        if len(token.split()) == 1:
-            token = token[0:len(token) - 1]
-            if token in titles:
-                current_title = token
+    # word count
+    for tok in tokens:
+        if tok != "":
+            count += 1
+    if count == 475: errors += 0
+    else:
+        errors += min(abs(475-count)/20, 5)
+
+    # GPA
+    word_tokens = tokenize.input_file_words(resume,[])
+    print word_tokens
+    gpaFound = False
+    for token in word_tokens:
+        if "gpa" in token.lower():
+            index = word_tokens.index(token)
+            if "/" in word_tokens[index + 1]:
+                words = word_tokens[index + 1].split("/")
+                for word in words:
+                    gpa = int(word)
+                    if gpa == 4.00:
+                        errors += 0
+                    elif gpa >= 3.00 and gpa < 4.00:
+                        errors += 3
+                    elif gpa >= 2.00 and gpa < 3.00:
+                        errors += 5
+                    else:
+                        errors += 7
+                    gpaFound = True
+            else:
+                gpa = int(word_tokens[index + 1])
+                if gpa == 4.00:
+                    errors += 0
+                elif gpa >= 3.00 and gpa < 4.00:
+                    errors += 3
+                elif gpa >= 2.00 and gpa < 3.00:
+                    errors += 5
+                else:
+                    errors += 7
+                gpaFound = True
+    if gpaFound == False: errors += 9
+
+    # get email
+    for token in word_tokens:
+        if "@" in token:
+            email = token
+            break
+
+    # level of degree
+    desiredDegree = raw_input("Degree needed: ")
+    degree = difflib.get_close_matches(desiredDegree, word_tokens)
+    print("Closest match to " + desiredDegree + " is " +
+            degree + ".")
+    quit = False
+    while (!quit):
+        answer1 = raw_input("Would you like to search for another degree? (Y/N)")
+        if answer1 == "Y" or answer1 == "y" or answer == "yes" or answer == "Yes":
+            desiredDegree = raw_input("Degree needed: ")
+            degree = difflib.get_close_matches(desiredDegree, word_tokens)
+            print("Closest match to " + desiredDegree + " is " +
+                    degree + ".")
+        else answer1 = "N" or answer1 == "n" or answer1 == "no" or answer1 == "No":
+            quit = True
+    answer = raw_input("Is this what you are looking for? (Y/N)")
+    if answer == "yes": errors += 0
+    else: errors += 10
+
+    # word count under experience/projects/leadership
+
 
     # find spelling errors
-    for token in tokens:
-        if len(token.split()) == 1:
-            if token[0:len(token) - 1] in titles:
-                continue
-            else:
-                if (correct(token) != token):
-                    errors += 1
-        else: 
-            token_parse = token.split()
-            for tok in token_parse:
-                if (correct(tok) != tok):
-                    if ("'" in tok):
-                        continue
-                    else:
-                        errors += 1
+    # for token in tokens:
+    #     if len(token.split()) == 1:
+    #         if token[0:len(token) - 1] in titles or token in titles:
+    #             continue
+    #         else:
+    #             if (correct(token) != token):
+    #                 errors += 1
+    #     else: 
+    #         token_parse = token.split()
+    #         for tok in token_parse:
+    #             if (correct(tok) != tok):
+    #                 if ("'" in tok or "," in tok):
+    #                     continue
+    #                 else:
+    #                     errors += 1
+        # if token == "gpa":
+        #     index = tokens.index(token)
+        #     gpa = int(tokens[index + 1])
+        #     if gpa == 4.00:
+        #         if score == 100: score += 0
+        #         else: score += 10
+        #     elif gpa >= 3.00 and gpa < 4.00: 
+        #         if score == 100: score += 0
+        #         else: score += 5
+        #     elif gpa >= 2.00 and gpa < 3.00:
+        #         if score < 5: score -= 0
+        #         else: score -= 5
+        #     else:
+        #         if score < 10: score -= 0
+        #         else: score -= 10
+    print "finished parsing"
     if errors % 10 == 0: score -= (errors + 1) % 10
     else: score -= errors % 10 
-
-    # find GPA
-    for token in tokens:
-        if token == "gpa":
-            index = tokens.index(token)
-            gpa = int(tokens[index + 1])
-            if gpa == 4.00:
-                if score == 100: score += 0
-                else: score += 10
-            elif gpa >= 3.00 and gpa < 4.00: 
-                if score == 100: score += 0
-                else: score += 5
-            elif gpa >= 2.00 and gpa < 3.00:
-                if score < 5: score -= 0
-                else: score -= 5
-            else:
-                if score < 10: score -= 0
-                else: score -= 10
+        
     (cat, c_score) = category(resume)
     return (cat, score)
 
